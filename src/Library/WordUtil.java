@@ -1,10 +1,12 @@
+package Library;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.io.FileReader;
 
-public class wordLoader{
-    public ArrayList<String> importer (String LibName)
+public class WordUtil{
+
+    public static ArrayList<String> importer (String LibName)
     {
         ArrayList<String> words = new ArrayList<String>();
         try{
@@ -27,5 +29,11 @@ public class wordLoader{
             System.exit(1);
         }
         return words;
+    }
+
+    public static int Randomizer(int max)
+    {
+        int num = (int)(Math.random()*(max + 1));
+        return num;
     }
 }
