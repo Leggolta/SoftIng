@@ -1,0 +1,10 @@
+Run
+Eat
+Speak
+Write
+Read
+Sleep
+Drink
+Work
+Study
+Play

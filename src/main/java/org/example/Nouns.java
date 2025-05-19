@@ -1,11 +1,12 @@
 package org.example;
+
 import java.util.ArrayList;
 public class Nouns
 {
     private ArrayList<String> NounList;
     public Nouns()
     {
-        NounList = WordUtil.importer("include/libraries/Nouns.txt");
+        NounList = WordUtil.importer("src/main/resources/Nouns.txt");
     }
     public String Random()
     {

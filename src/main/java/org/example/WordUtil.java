@@ -1,8 +1,10 @@
 package org.example;
+
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Scanner;
-import java.io.FileReader;
 
 public class WordUtil{
 
@@ -31,9 +33,44 @@ public class WordUtil{
         return words;
     }
 
-    public static int Randomizer(int max)
-    {
-        int num = (int)(Math.random()*(max + 1));
+    public static int Randomizer(int max) {
+        int num = (int)(Math.random() * max);   // Genera da 0 a max - 1 (xchè se no dava index out of boundaries)**********
         return num;
+    }
+
+
+    public static ArrayList<String> SentenceSplitter(String Input) //divides a string in arraylist for easier elaboration
+    {
+        ArrayList<String> Splitter = new ArrayList<String>();
+        String[] WordArray = Input.split(" ");
+
+        /*
+        **************************************************vecchio codice va bene ma lo posso compattare
+        for(String i : WordArray)
+        {
+            Splitter.add(i);
+        }
+        */
+
+        // modo più comptto, funzionano entrambi gia testato, è una questione di compattezza/bellezza ???opignioni
+        Collections.addAll(Splitter, WordArray);
+
+        return Splitter;
+    }
+
+    public static String TypeCheck(String Name)
+    {
+        if (Name.contains("[") && Name.contains("]"))
+        {
+            String TypeName = Name.substring(Name.indexOf("[") + 1, Name.indexOf("]"));
+            return "[" + TypeName + "]";
+        }
+        else return null;
+    }
+
+    public static String TypeSubstitute(String Original, String Type, String NewWord)
+    {
+        String Changed = Original.replace(Type, NewWord);
+        return Changed;
     }
 }

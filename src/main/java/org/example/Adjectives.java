@@ -1,11 +1,12 @@
 package org.example;
+
 import java.util.ArrayList;
 public class Adjectives
 {
     private ArrayList<String> AdjectiveList;
     public Adjectives()
     {
-        AdjectiveList = WordUtil.importer("include/libraries/Adjectives.txt");
+        AdjectiveList = WordUtil.importer("src/main/resources/Adjectives.txt");
     }
     public String Random()
     {

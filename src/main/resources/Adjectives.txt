@@ -1,0 +1,10 @@
+Happy
+Sad
+Big
+Small
+Fast
+Slow
+Cold
+Hot
+Beautiful
+Easy
