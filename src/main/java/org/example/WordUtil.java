@@ -1,10 +1,9 @@
 package org.example;
-
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Scanner;
+import java.io.FileReader;
 
 public class WordUtil{
 
@@ -44,16 +43,7 @@ public class WordUtil{
         ArrayList<String> Splitter = new ArrayList<String>();
         String[] WordArray = Input.split(" ");
 
-        /*
-        **************************************************vecchio codice va bene ma lo posso compattare
-        for(String i : WordArray)
-        {
-            Splitter.add(i);
-        }
-        */
-
-        // modo più comptto, funzionano entrambi gia testato, è una questione di compattezza/bellezza ???opignioni
-        Collections.addAll(Splitter, WordArray);
+        Collections.addAll(Splitter, WordArray);//***********************************************
 
         return Splitter;
     }
