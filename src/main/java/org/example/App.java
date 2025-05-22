@@ -1,6 +1,8 @@
 package org.example;
 
 import com.google.cloud.language.v1.*;
+import com.google.cloud.language.v1beta2.ModerateTextResponse;
+import com.google.cloud.language.v1beta2.ClassificationCategory;
 
 import java.util.*;
 
@@ -157,6 +159,26 @@ public class App {
         System.out.println("\n🌀 Generated nonsense sentence(s):");
         for (String s : finalSentences) {
             System.out.println("→ " + s);
+        }
+
+        // Controllo di tossicità / moderazione del testo
+        try (com.google.cloud.language.v1beta2.LanguageServiceClient modClient = com.google.cloud.language.v1beta2.LanguageServiceClient.create()) {
+
+            com.google.cloud.language.v1beta2.Document modDoc =
+                    com.google.cloud.language.v1beta2.Document.newBuilder()
+                            .setContent(text)
+                            .setType(com.google.cloud.language.v1beta2.Document.Type.PLAIN_TEXT)
+                            .build();
+
+            ModerateTextResponse modResponse = modClient.moderateText(modDoc);
+            List<ClassificationCategory> cats = modResponse.getModerationCategoriesList();
+
+            // Filtro solo la categoria 'Toxic'
+            //Need to set the confidence thresholds
+            cats.stream()
+                    .filter(cat -> "Toxic".equalsIgnoreCase(cat.getName()))
+                    .findFirst()
+                    .ifPresent(cat -> System.out.printf("Toxicity detected! Toxicity score: %.2f%n", cat.getConfidence()));
         }
     }
 }
