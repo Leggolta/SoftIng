@@ -156,29 +156,36 @@ public class App {
             System.out.println("👉 Multiple nonsense sentences have been generated to use them all.");
         }
 
+        // Print generated sentences with toxicity scores in one pass
         System.out.println("\n🌀 Generated nonsense sentence(s):");
-        for (String s : finalSentences) {
-            System.out.println("→ " + s);
-        }
+        try (com.google.cloud.language.v1beta2.LanguageServiceClient modClient =
+                     com.google.cloud.language.v1beta2.LanguageServiceClient.create()) {
 
-        // Controllo di tossicità / moderazione del testo
-        try (com.google.cloud.language.v1beta2.LanguageServiceClient modClient = com.google.cloud.language.v1beta2.LanguageServiceClient.create()) {
+            for (String s : finalSentences) {
+                // Build a Document for the current sentence
+                com.google.cloud.language.v1beta2.Document outDoc =
+                        com.google.cloud.language.v1beta2.Document.newBuilder()
+                                .setContent(s)
+                                .setType(com.google.cloud.language.v1beta2.Document.Type.PLAIN_TEXT)
+                                .build();
 
-            com.google.cloud.language.v1beta2.Document modDoc =
-                    com.google.cloud.language.v1beta2.Document.newBuilder()
-                            .setContent(text)
-                            .setType(com.google.cloud.language.v1beta2.Document.Type.PLAIN_TEXT)
-                            .build();
+                // Moderate the sentence
+                ModerateTextResponse outResponse = modClient.moderateText(outDoc);
 
-            ModerateTextResponse modResponse = modClient.moderateText(modDoc);
-            List<ClassificationCategory> cats = modResponse.getModerationCategoriesList();
+                // Extract the "Toxic" category if present
+                java.util.Optional<ClassificationCategory> toxicCat =
+                        outResponse.getModerationCategoriesList().stream()
+                                .filter(cat -> "Toxic".equalsIgnoreCase(cat.getName()))
+                                .findFirst();
 
-            // Filtro solo la categoria 'Toxic'
-            //Need to set the confidence thresholds
-            cats.stream()
-                    .filter(cat -> "Toxic".equalsIgnoreCase(cat.getName()))
-                    .findFirst()
-                    .ifPresent(cat -> System.out.printf("Toxicity detected! Toxicity score: %.2f%n", cat.getConfidence()));
+                // Assign toxicity score or default message
+                String toxicity = toxicCat
+                        .map(cat -> String.format("%.2f", cat.getConfidence()))
+                        .orElse("No toxicity detected");
+
+                // Print sentence with its toxicity score exactly once
+                System.out.println("→ " + s + " -- Toxicity score: " + toxicity);
+            }
         }
     }
 }
