@@ -1,5 +1,5 @@
 package org.example;
-
+import org.example.words.*;
 import com.google.cloud.language.v1.*;
 import com.google.cloud.language.v1beta2.ModerateTextResponse;
 import com.google.cloud.language.v1beta2.ClassificationCategory;
@@ -158,6 +158,7 @@ public class App {
 
         // Print generated sentences with toxicity scores in one pass
         System.out.println("\n🌀 Generated nonsense sentence(s):");
+
         try (com.google.cloud.language.v1beta2.LanguageServiceClient modClient =
                      com.google.cloud.language.v1beta2.LanguageServiceClient.create()) {
 
@@ -178,13 +179,13 @@ public class App {
                                 .filter(cat -> "Toxic".equalsIgnoreCase(cat.getName()))
                                 .findFirst();
 
-                // Assign toxicity score or default message
+                // Assign toxicity score or default message (in percent)
                 String toxicity = toxicCat
-                        .map(cat -> String.format("%.2f", cat.getConfidence()))
+                        .map(cat -> String.format("%.2f%%", cat.getConfidence() * 100))
                         .orElse("No toxicity detected");
 
                 // Print sentence with its toxicity score exactly once
-                System.out.println("→ " + s + " -- Toxicity score: " + toxicity);
+                System.out.println("\n→ " + s + " \t ----> \t Toxicity score: " + toxicity);
             }
         }
     }
