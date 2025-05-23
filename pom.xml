@@ -8,18 +8,45 @@
     <artifactId>json</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-    <dependencies> <!-- Aggiunto questo tag -->
-        <dependency>
+    <dependencies> <!-- Dependencies -->
+        <dependency>    <!-- Google Cloud API -->
             <groupId>com.google.cloud</groupId>
             <artifactId>google-cloud-language</artifactId>
             <version>2.36.0</version>
         </dependency>
-    </dependencies> <!-- Aggiunto questo tag -->
+
+        <dependency>    <!-- Java FX -->
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>${javafx.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-fxml</artifactId>
+            <version>${javafx.version}</version>
+        </dependency>
+    </dependencies>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <javafx.version>20</javafx.version>
     </properties>
+
+    <build>
+        <plugins>
+            <plugin>    <!-- Plugin che gestisce il module-path di JavaFX -->
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>0.0.8</version>
+                <configuration>
+                    <!-- Classe contenente il main() che estende javafx.application.Application -->
+                    <mainClass>org.example.App</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

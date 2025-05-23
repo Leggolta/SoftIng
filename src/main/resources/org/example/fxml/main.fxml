@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.controller.Controller"
+      alignment="TOP_CENTER" spacing="10" padding="20">
+
+    <Label text="Nonsense generator" />
+    <TextField fx:id="inputField" promptText="Inserisci qui la frase…" />
+    <Button text="Genera" onAction="#onGenerateClicked" />
+    <TextArea fx:id="outputArea" editable="false" wrapText="true" prefRowCount="5"/>
+</VBox>
