@@ -2,12 +2,28 @@ package org.example;
 import org.example.words.*;
 import com.google.cloud.language.v1.*;
 import com.google.cloud.language.v1beta2.ModerateTextResponse;
-import com.google.cloud.language.v1beta2.ClassificationCategory;
-
 import java.util.*;
+import javafx.application.Application;
 
+/**Core application logic for Nonsense generator.
+ * Provides sentences generator method for GUI use and launches JavaFX UI.
+ */
 public class App {
-    public static void main(String[] args) throws Exception {
+
+    /**
+     * Generates a list of "nonsense" sentences with toxicity scores, based on the input text.
+     * If the input contains many words, prepends a notice before the generated sentences.
+     * @param text the input sentence to analyze
+     * @return list of formatted sentences with toxicity scores and notices
+     * @throws Exception on API errors or invalid input
+     */
+    public List<String> generate(String text) throws Exception {
+        // Validate input
+        if (text == null || text.trim().isEmpty() || !text.matches(".*[a-zA-Z]+.*")) {
+            throw new IllegalArgumentException("Invalid input: please enter a real sentence.");
+        }
+
+        // Initialize lists and structures
         Nouns nounList = new Nouns();
         Verbs verbList = new Verbs();
         Adjectives adjectiveList = new Adjectives();
@@ -16,177 +32,135 @@ public class App {
         Adverbs adverbList = new Adverbs();
         SentenceStructures sentenceStructures = new SentenceStructures();
 
-        Scanner scanner = new Scanner(System.in);
-        String text;
-        AnalyzeSyntaxResponse response;// mi serve scritto così per fare il controllo dopo
-
-        List<String> inputNouns;
-        List<String> inputVerbs;
-        List<String> inputAdjectives;
-        List<String> inputAdverbs;
-        List<String> inputArticles;
-        List<String> inputPronouns;
-
-        //continua a chiede se l'imput è non valido********************************************************
-        while (true) {
-            System.out.println("Please enter the sentence to be analyzed:");
-            text = scanner.nextLine().trim();
-
-            if (text.isEmpty() || !text.matches(".*[a-zA-Z]+.*")) {
-                System.out.println("❌ Invalid input. Please enter a sentence containing actual words (not just numbers or symbols).");
-                continue;
-            }
-
-            Document doc = Document.newBuilder()
-                    .setContent(text)
-                    .setType(Document.Type.PLAIN_TEXT)
+        // Syntax analysis via Google Cloud Language API
+        Document doc = Document.newBuilder()
+                .setContent(text)
+                .setType(Document.Type.PLAIN_TEXT)
+                .build();
+        AnalyzeSyntaxResponse syntaxResponse;
+        try (LanguageServiceClient language = LanguageServiceClient.create()) {
+            AnalyzeSyntaxRequest req = AnalyzeSyntaxRequest.newBuilder()
+                    .setDocument(doc)
+                    .setEncodingType(EncodingType.UTF8)
                     .build();
+            syntaxResponse = language.analyzeSyntax(req);
+        }
 
-            try (LanguageServiceClient language = LanguageServiceClient.create()) {
-                AnalyzeSyntaxRequest request = AnalyzeSyntaxRequest.newBuilder()
-                        .setDocument(doc)
-                        .setEncodingType(EncodingType.UTF8)
-                        .build();
+        // Categorize tokens
+        List<String> nouns      = new ArrayList<>();
+        List<String> verbs      = new ArrayList<>();
+        List<String> adjectives = new ArrayList<>();
+        List<String> adverbs    = new ArrayList<>();
+        List<String> articles   = new ArrayList<>();
+        List<String> pronouns   = new ArrayList<>();
 
-                response = language.analyzeSyntax(request);
-            }
-            //*************************************************************************************************+
-
-            inputNouns = new ArrayList<>();
-            inputVerbs = new ArrayList<>();
-            inputAdjectives = new ArrayList<>();
-            inputAdverbs = new ArrayList<>();
-            inputArticles = new ArrayList<>();
-            inputPronouns = new ArrayList<>();
-
-            for (Token token : response.getTokensList()) {//più compatto***************************************
-                String word = token.getText().getContent();
-                switch (token.getPartOfSpeech().getTag()) {
-                    case NOUN -> inputNouns.add(word);
-                    case VERB -> inputVerbs.add(word);
-                    case ADJ -> inputAdjectives.add(word);
-                    case ADV -> inputAdverbs.add(word);
-                    case DET -> inputArticles.add(word);
-                    case PRON -> inputPronouns.add(word);
-                }
-            }
-
-            if (inputNouns.isEmpty() && inputVerbs.isEmpty() && inputAdjectives.isEmpty()
-                    && inputAdverbs.isEmpty() && inputArticles.isEmpty() && inputPronouns.isEmpty()) {
-                System.out.println("❌ No recognizable words found.");
-                System.out.println("👉 Please try again with a real sentence.");
-            } else {
-                break;
+        for (Token token : syntaxResponse.getTokensList()) {
+            String w = token.getText().getContent();
+            switch (token.getPartOfSpeech().getTag()) {
+                case NOUN -> nouns.add(w);
+                case VERB -> verbs.add(w);
+                case ADJ  -> adjectives.add(w);
+                case ADV  -> adverbs.add(w);
+                case DET  -> articles.add(w);
+                case PRON -> pronouns.add(w);
+                default   -> {}
             }
         }
 
         // Shuffle for variety
-        Collections.shuffle(inputNouns);
-        Collections.shuffle(inputVerbs);
-        Collections.shuffle(inputAdjectives);
-        Collections.shuffle(inputAdverbs);
-        Collections.shuffle(inputArticles);
-        Collections.shuffle(inputPronouns);
+        Collections.shuffle(nouns);
+        Collections.shuffle(verbs);
+        Collections.shuffle(adjectives);
+        Collections.shuffle(adverbs);
+        Collections.shuffle(articles);
+        Collections.shuffle(pronouns);
 
-        //*********************************************************************************************************
-        int nounIndex = 0, verbIndex = 0, adjIndex = 0, advIndex = 0, artIndex = 0, pronIndex = 0;
+        // Generate nonsense sentences
+        int nIdx=0, vIdx=0, adjIdx=0, advIdx=0, artIdx=0, prIdx=0;
         List<String> finalSentences = new ArrayList<>();
 
-        while (nounIndex < inputNouns.size() || verbIndex < inputVerbs.size()
-                || adjIndex < inputAdjectives.size() || advIndex < inputAdverbs.size()
-                || artIndex < inputArticles.size() || pronIndex < inputPronouns.size()) {
+        while (nIdx < nouns.size() || vIdx < verbs.size() ||
+                adjIdx < adjectives.size() || advIdx < adverbs.size() ||
+                artIdx < articles.size()  || prIdx < pronouns.size()) {
 
-            SentenceStructureInfo bestTemplate = null;
-            int maxWordsUsed = -1;
-
-            for (SentenceStructureInfo template : sentenceStructures.getStructures()) {
-                int used = Math.min(template.getCount("[noun]"), inputNouns.size() - nounIndex)
-                        + Math.min(template.getCount("[verb]"), inputVerbs.size() - verbIndex)
-                        + Math.min(template.getCount("[adjective]"), inputAdjectives.size() - adjIndex)
-                        + Math.min(template.getCount("[adverb]"), inputAdverbs.size() - advIndex)
-                        + Math.min(template.getCount("[article]"), inputArticles.size() - artIndex)
-                        + Math.min(template.getCount("[pronoun]"), inputPronouns.size() - pronIndex);
-
-                if (used > maxWordsUsed) {
-                    bestTemplate = template;
-                    maxWordsUsed = used;
+            // Find best template
+            SentenceStructureInfo bestTpl = null;
+            int maxUsed = -1;
+            for (SentenceStructureInfo tpl : sentenceStructures.getStructures()) {
+                int used = Math.min(tpl.getCount("[noun]"), nouns.size()-nIdx)
+                        + Math.min(tpl.getCount("[verb]"), verbs.size()-vIdx)
+                        + Math.min(tpl.getCount("[adjective]"), adjectives.size()-adjIdx)
+                        + Math.min(tpl.getCount("[adverb]"), adverbs.size()-advIdx)
+                        + Math.min(tpl.getCount("[article]"), articles.size()-artIdx)
+                        + Math.min(tpl.getCount("[pronoun]"), pronouns.size()-prIdx);
+                if (used > maxUsed) {
+                    maxUsed = used;
+                    bestTpl = tpl;
                 }
             }
+            if (bestTpl == null) break;
 
-            if (bestTemplate == null) break;
-            //***********************************************************************************************************
-
-            ArrayList<String> phrase = WordUtil.SentenceSplitter(bestTemplate.getTemplate());
-
-            for (int i = 0; i < phrase.size(); i++) {
-                String tokenType = WordUtil.TypeCheck(phrase.get(i));
-                if (tokenType == null) continue;
-
-                switch (tokenType) {// più compatto**********************************************************************
-                    case "[noun]" -> phrase.set(i, WordUtil.TypeSubstitute(phrase.get(i), "[noun]",
-                            nounIndex < inputNouns.size() ? inputNouns.get(nounIndex++) : nounList.Random()));
-                    case "[verb]" -> phrase.set(i, WordUtil.TypeSubstitute(phrase.get(i), "[verb]",
-                            verbIndex < inputVerbs.size() ? inputVerbs.get(verbIndex++) : verbList.Random()));
-                    case "[adjective]" -> phrase.set(i, WordUtil.TypeSubstitute(phrase.get(i), "[adjective]",
-                            adjIndex < inputAdjectives.size() ? inputAdjectives.get(adjIndex++) : adjectiveList.Random()));
-                    case "[adverb]" -> phrase.set(i, WordUtil.TypeSubstitute(phrase.get(i), "[adverb]",
-                            advIndex < inputAdverbs.size() ? inputAdverbs.get(advIndex++) : adverbList.Random()));
-                    case "[article]" -> phrase.set(i, WordUtil.TypeSubstitute(phrase.get(i), "[article]",
-                            artIndex < inputArticles.size() ? inputArticles.get(artIndex++) : articleList.Random()));
-                    case "[pronoun]" -> phrase.set(i, WordUtil.TypeSubstitute(phrase.get(i), "[pronoun]",
-                            pronIndex < inputPronouns.size() ? inputPronouns.get(pronIndex++) : pronounList.Random()));
+            // Split template and substitute
+            List<String> tokens = WordUtil.SentenceSplitter(bestTpl.getTemplate());
+            for (int i = 0; i < tokens.size(); i++) {
+                String typeTag = WordUtil.TypeCheck(tokens.get(i));
+                if (typeTag == null) continue;
+                switch (typeTag) {
+                    case "[noun]" -> tokens.set(i, WordUtil.TypeSubstitute(tokens.get(i), "[noun]",
+                            nIdx < nouns.size() ? nouns.get(nIdx++) : nounList.Random()));
+                    case "[verb]" -> tokens.set(i, WordUtil.TypeSubstitute(tokens.get(i), "[verb]",
+                            vIdx < verbs.size() ? verbs.get(vIdx++) : verbList.Random()));
+                    case "[adjective]" -> tokens.set(i, WordUtil.TypeSubstitute(tokens.get(i), "[adjective]",
+                            adjIdx < adjectives.size() ? adjectives.get(adjIdx++) : adjectiveList.Random()));
+                    case "[adverb]" -> tokens.set(i, WordUtil.TypeSubstitute(tokens.get(i), "[adverb]",
+                            advIdx < adverbs.size() ? adverbs.get(advIdx++) : adverbList.Random()));
+                    case "[article]" -> tokens.set(i, WordUtil.TypeSubstitute(tokens.get(i), "[article]",
+                            artIdx < articles.size() ? articles.get(artIdx++) : articleList.Random()));
+                    case "[pronoun]" -> tokens.set(i, WordUtil.TypeSubstitute(tokens.get(i), "[pronoun]",
+                            prIdx < pronouns.size() ? pronouns.get(prIdx++) : pronounList.Random()));
                 }
             }
-
-            finalSentences.add(String.join(" ", phrase));
+            finalSentences.add(String.join(" ", tokens));
         }
 
-        // Output section
-        System.out.println("\nWords found:");
-        System.out.println("Nouns: " + inputNouns);
-        System.out.println("Verbs: " + inputVerbs);
-        System.out.println("Adjectives: " + inputAdjectives);
-        System.out.println("Adverbs: " + inputAdverbs);
-        System.out.println("Articles: " + inputArticles);
-        System.out.println("Pronouns: " + inputPronouns);
-
-        // avvisa se genera pù frasi *****************************************************************************
-        if (finalSentences.size() > 1) {
-            System.out.println("\n⚠️ The input sentence contains many words.");
-            System.out.println("👉 Multiple nonsense sentences have been generated to use them all.");
-        }
-
-        // Print generated sentences with toxicity scores in one pass
-        System.out.println("\n🌀 Generated nonsense sentence(s):");
-
+        // Moderate text toxicity
+        List<String> withToxicity = new ArrayList<>();
         try (com.google.cloud.language.v1beta2.LanguageServiceClient modClient =
                      com.google.cloud.language.v1beta2.LanguageServiceClient.create()) {
-
             for (String s : finalSentences) {
-                // Build a Document for the current sentence
                 com.google.cloud.language.v1beta2.Document outDoc =
                         com.google.cloud.language.v1beta2.Document.newBuilder()
                                 .setContent(s)
                                 .setType(com.google.cloud.language.v1beta2.Document.Type.PLAIN_TEXT)
                                 .build();
-
-                // Moderate the sentence
-                ModerateTextResponse outResponse = modClient.moderateText(outDoc);
-
-                // Extract the "Toxic" category if present
-                java.util.Optional<ClassificationCategory> toxicCat =
-                        outResponse.getModerationCategoriesList().stream()
-                                .filter(cat -> "Toxic".equalsIgnoreCase(cat.getName()))
-                                .findFirst();
-
-                // Assign toxicity score or default message (in percent)
-                String toxicity = toxicCat
-                        .map(cat -> String.format("%.2f%%", cat.getConfidence() * 100))
+                ModerateTextResponse modResp = modClient.moderateText(outDoc);
+                String tox = modResp.getModerationCategoriesList().stream()
+                        .filter(c -> "Toxic".equalsIgnoreCase(c.getName()))
+                        .findFirst()
+                        .map(c -> String.format("%.2f%%", c.getConfidence() * 100))
                         .orElse("No toxicity detected");
-
-                // Print sentence with its toxicity score exactly once
-                System.out.println("\n→ " + s + " \t ----> \t Toxicity score: " + toxicity);
+                withToxicity.add("→ " + s + "  ---->  Toxicity score: " + tox);
             }
         }
+
+        // If multiple sentences generated, prepend notice
+        if (finalSentences.size() > 1) {
+            List<String> notice = Arrays.asList(
+                    "The input sentence contains many words.",
+                    "Multiple nonsense sentences have been generated to use them all"
+            );
+            List<String> combined = new ArrayList<>();
+            combined.addAll(notice);
+            combined.addAll(withToxicity);
+            return combined;
+        }
+
+        return withToxicity;
+    }
+
+    //Launch the JavaFX UI instead of console I/O
+
+    public static void main(String[] args) {
+        Application.launch(UI.class, args);
     }
 }

@@ -1,15 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.text.Font?>
 
+<!-- Bind to controller class -->
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
-      fx:controller="org.example.controller.Controller"
-      alignment="TOP_CENTER" spacing="10" padding="20">
+      fx:controller="org.example.controller.MainController"
+      alignment="TOP_CENTER"
+      spacing="15">
 
-    <Label text="Nonsense generator" />
-    <TextField fx:id="inputField" promptText="Inserisci qui la frase…" />
-    <Button text="Genera" onAction="#onGenerateClicked" />
-    <TextArea fx:id="outputArea" editable="false" wrapText="true" prefRowCount="5"/>
+    <!-- Uniform padding of 20px on all sides -->
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Title -->
+    <Label text="Nonsense generator">
+        <font><Font size="28"/></font>
+    </Label>
+
+    <!-- Input field -->
+    <TextField fx:id="inputField"
+               promptText="Enter the sentence to be analyzed"
+               maxWidth="400"/>
+
+    <!-- Button -->
+    <Button text="Generate" onAction="#onGenerateClicked"/>
+
+    <!-- Output area -->
+    <TextArea fx:id="outputArea"
+              editable="false"
+              wrapText="true"
+              prefHeight="200"
+              maxWidth="580"/>
 </VBox>
