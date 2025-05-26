@@ -1,4 +1,4 @@
-package org.example;
+package org.example.words;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;

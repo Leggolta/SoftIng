@@ -1,7 +1,5 @@
 package org.example.words;
 
-import org.example.WordUtil;
-
 import java.util.ArrayList;
 
 public abstract class WordList {

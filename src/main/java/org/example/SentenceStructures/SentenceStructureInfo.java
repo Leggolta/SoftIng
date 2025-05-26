@@ -1,4 +1,6 @@
-package org.example;
+package org.example.SentenceStructures;
+
+import org.example.words.WordUtil;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,5 +1,7 @@
 package org.example;
+import org.example.SentenceStructures.SentenceStructures;
 import org.example.words.*;
+import org.example.SentenceStructures.*;
 import com.google.cloud.language.v1.*;
 import com.google.cloud.language.v1beta2.ModerateTextResponse;
 import java.util.*;
