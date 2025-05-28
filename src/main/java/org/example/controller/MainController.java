@@ -70,7 +70,7 @@ public class MainController {
         // Load syntax tag full names from properties file
         try (InputStream in = getClass().getResourceAsStream("/syntax_tags.properties")) {
             if (in == null) {
-                System.err.println("labels.properties non trovato!");
+                System.err.println("labels.properties not found!");
             } else {
                 syntaxTagsMap.load(in);
             }
@@ -178,7 +178,7 @@ public class MainController {
                         container.setPrefWidth(20);
                         container.setMinWidth(20);
                         container.prefHeightProperty().bind(toxicityBarsContainer.heightProperty());
-                        container.setStyle("-fx-border-color: #ccc; -fx-background-color: #eee; -fx-background-radius:4; -fx-border-radius:4;");
+                        container.getStyleClass().add("main-container");
 
                         Rectangle bar = new Rectangle();
                         bar.setArcWidth(8);

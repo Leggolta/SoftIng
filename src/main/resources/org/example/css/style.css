@@ -1,0 +1,6 @@
+.main-container {
+    -fx-border-color: #ccc;
+    -fx-background-color: #eee;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+}
