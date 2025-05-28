@@ -5,6 +5,8 @@ import org.example.SentenceStructures.SentenceStructureInfo;
 import com.google.cloud.language.v1.*;
 import com.google.cloud.language.v1beta2.ClassificationCategory;
 import com.google.cloud.language.v1beta2.ModerateTextResponse;
+import com.google.api.gax.core.FixedCredentialsProvider;
+import com.google.cloud.language.v1.LanguageServiceSettings;
 import java.util.*;
 import javafx.application.Application;
 
@@ -46,6 +48,8 @@ public class App {
         if (text == null || text.trim().isEmpty() || !text.matches(".*[a-zA-Z]+.*")) {
             throw new IllegalArgumentException("Invalid input: please enter a real sentence.");
         }
+        // Load credentials provider singleton
+        FixedCredentialsProvider credsProvider = org.example.GoogleCredentialsProvider.getProvider();
 
         // Initialize word lists and structures
         Nouns nounList = new Nouns();
@@ -61,13 +65,21 @@ public class App {
                 .setContent(text)
                 .setType(Document.Type.PLAIN_TEXT)
                 .build();
+
+        LanguageServiceSettings v1settings = LanguageServiceSettings.newBuilder()
+                .setCredentialsProvider(credsProvider)
+                .build();
         AnalyzeSyntaxResponse syntaxResponse;
-        try (LanguageServiceClient language = LanguageServiceClient.create()) {
-            AnalyzeSyntaxRequest req = AnalyzeSyntaxRequest.newBuilder()
-                    .setDocument(doc)
-                    .setEncodingType(EncodingType.UTF8)
-                    .build();
-            syntaxResponse = language.analyzeSyntax(req);
+        try (LanguageServiceClient language = LanguageServiceClient.create(v1settings)) {
+            syntaxResponse = language.analyzeSyntax(
+                    AnalyzeSyntaxRequest.newBuilder()
+                            .setDocument(Document.newBuilder()
+                                    .setContent(text)
+                                    .setType(Document.Type.PLAIN_TEXT)
+                                    .build())
+                            .setEncodingType(EncodingType.UTF8)
+                            .build()
+            );
         }
 
         // Collect tokens by part of speech
@@ -102,7 +114,6 @@ public class App {
         // Build nonsense sentences using templates
         List<String> finalSentences = new ArrayList<>();
         int nIdx=0, vIdx=0, adjIdx=0, advIdx=0, artIdx=0, prIdx=0;
-        SentenceStructures structures = new SentenceStructures();
 
         while (nIdx < nouns.size() || vIdx < verbs.size() ||
                 adjIdx < adjectives.size() || advIdx < adverbs.size() ||
@@ -154,8 +165,12 @@ public class App {
         }
 
         // Moderate each sentence and record toxicity
+        var betaSettings = com.google.cloud.language.v1beta2.LanguageServiceSettings.newBuilder()
+                .setCredentialsProvider(credsProvider)
+                .build();
         List<SentenceResult> results = new ArrayList<>();
-        try (var modClient = com.google.cloud.language.v1beta2.LanguageServiceClient.create()) {
+        try (var modClient =
+                     com.google.cloud.language.v1beta2.LanguageServiceClient.create(betaSettings)) {
             for (String s : finalSentences) {
                 var outDoc = com.google.cloud.language.v1beta2.Document.newBuilder()
                         .setContent(s)

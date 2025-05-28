@@ -37,10 +37,8 @@ public class MainController {
 
     // FXML-injected UI elements
     @FXML private TextField inputField;
-    @FXML private TextArea outputArea;
     @FXML private CheckBox showTreeCheckbox;
     @FXML private VBox syntaxContainer;
-    @FXML private VBox generatedContainer;
     @FXML private Label syntaxLabel;
     @FXML private ScrollPane treeScroll;
     @FXML private TextFlow treeAsciiFlow;
@@ -111,8 +109,8 @@ public class MainController {
     private void onGenerateClicked() {
         String inputText = inputField.getText().trim();
         if (inputText.isEmpty()) {
-            outputArea.setText("❌ Please enter a non-empty sentence!");
-            //treeView.setVisible(false);
+            outputFlow.getChildren().clear();
+            outputFlow.getChildren().add(new Text("❌ Please enter a non-empty sentence!"));
             toxicityScore.set(0);
             return;
         }

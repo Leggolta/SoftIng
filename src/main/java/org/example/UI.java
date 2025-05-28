@@ -15,6 +15,7 @@ public class UI extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+
         // Load the UI layout from the FXML resource
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/fxml/main.fxml"));
 
