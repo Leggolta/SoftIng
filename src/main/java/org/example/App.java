@@ -16,6 +16,7 @@ public class App {
      * Holds a generated sentence along with its toxicity score.
      */
     public static class SentenceResult {
+        private final String structure;
         private final String text;
         private final double toxicity;
 
@@ -23,10 +24,13 @@ public class App {
          * @param text      the generated sentence
          * @param toxicity  toxicity confidence score from Google API
          */
-        public SentenceResult(String text, double toxicity) {
+        public SentenceResult(String structure, String text, double toxicity) {
+            this.structure = structure;
             this.text = text;
             this.toxicity = toxicity;
         }
+        /** @return the sentence's structure */
+        public String getStructure() { return structure; }
 
         /** @return the sentence text */
         public String getText() { return text; }
@@ -113,6 +117,7 @@ public class App {
 
         // Build nonsense sentences using templates
         List<String> finalSentences = new ArrayList<>();
+        List<String> usedStructures = new ArrayList<>();
         int nIdx=0, vIdx=0, adjIdx=0, advIdx=0, artIdx=0, prIdx=0;
 
         while (nIdx < nouns.size() || vIdx < verbs.size() ||
@@ -135,7 +140,7 @@ public class App {
                 }
             }
             if (bestTpl == null) break;
-
+            usedStructures.add(bestTpl.getTemplate());
             // Split the chosen template into tokens, then replace placeholders with actual words or random fallbacks
             List<String> tokens = WordUtil.SentenceSplitter(bestTpl.getTemplate());
             for (int i = 0; i < tokens.size(); i++) {
@@ -171,7 +176,10 @@ public class App {
         List<SentenceResult> results = new ArrayList<>();
         try (var modClient =
                      com.google.cloud.language.v1beta2.LanguageServiceClient.create(betaSettings)) {
-            for (String s : finalSentences) {
+            for (int i = 0; i < finalSentences.size(); i++) {
+                String s   = finalSentences.get(i);
+                String tpl = usedStructures.get(i);
+
                 var outDoc = com.google.cloud.language.v1beta2.Document.newBuilder()
                         .setContent(s)
                         .setType(com.google.cloud.language.v1beta2.Document.Type.PLAIN_TEXT)
@@ -181,7 +189,8 @@ public class App {
                         .filter(c -> "Toxic".equalsIgnoreCase(c.getName()))
                         .mapToDouble(ClassificationCategory::getConfidence)
                         .findFirst().orElse(0.0);
-                results.add(new SentenceResult(s, tox));
+
+                results.add(new SentenceResult(tpl, s, tox));
             }
         }
         return results;

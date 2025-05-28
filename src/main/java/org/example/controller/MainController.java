@@ -154,19 +154,21 @@ public class MainController {
                     Font baseFont = Font.getDefault();
 
                     for (SentenceResult r : finalResults) {
-                        // normal text
-                        Text sentenceText = new Text("→ " + r.getText() + "\n→ Sentence toxicity: ");
+                        // 1) show the structure template
+                        Text structText = new Text("Structure: " + r.getStructure() + "\n");
+                        structText.setFont(Font.font(baseFont.getFamily(), FontPosture.ITALIC, baseFont.getSize()));
+                        structText.setFill(Color.DARKGRAY);
+
+                        // 2) the generated sentence
+                        Text sentenceText = new Text("→ " + r.getText() + "\n");
                         sentenceText.setFont(baseFont);
 
-                        // bold percentage
-                        Text boldPct = new Text(String.format("%.2f%%\n\n", r.getToxicity() * 100));
-                        boldPct.setFont(Font.font(
-                                baseFont.getFamily(),
-                                FontWeight.BOLD,
-                                baseFont.getSize()
-                        ));
+                        // 3) the toxicity percentage
+                        Text toxText = new Text("→ Toxicity: " + String.format("%.2f%%\n\n", r.getToxicity() * 100));
+                        toxText.setFont(Font.font(baseFont.getFamily(), FontWeight.BOLD, baseFont.getSize()));
 
-                        outputFlow.getChildren().addAll(sentenceText, boldPct);
+                        // 4) add to the TextFlow
+                        outputFlow.getChildren().addAll(structText, sentenceText, toxText);
                     }
 
                     toxicityBarsContainer.getChildren().clear();
