@@ -1,41 +1,133 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.*?>
 
-<!-- Bind to controller class -->
-<VBox xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml"
-      fx:controller="org.example.controller.MainController"
-      alignment="TOP_CENTER"
-      spacing="15">
+<!--
+  Main layout container for the application UI.
+  Uses a BorderPane to divide the window into top, center, and bottom regions.
+-->
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.controller.MainController"
+            prefWidth="1000" prefHeight="600">
 
-    <!-- Uniform padding of 20px on all sides -->
-    <padding>
-        <Insets top="20" right="20" bottom="20" left="20"/>
-    </padding>
+    <!--
+      Top section: application title, text input field,
+      "Generate" button, and a checkbox to toggle tree display.
+    -->
+    <top>
+        <VBox alignment="CENTER" spacing="10" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets top="20" bottom="10" left="20" right="20"/>
+            </padding>
 
-    <!-- Title -->
-    <Label text="Nonsense generator">
-        <font><Font size="28"/></font>
-    </Label>
+            <!-- Large title label -->
+            <Label text="Nonsense Generator">
+                <font><Font size="28"/></font>
+            </Label>
 
-    <!-- Input field -->
-    <TextField fx:id="inputField"
-               promptText="Enter the sentence to be analyzed"
-               maxWidth="400"/>
+            <!-- Input row: text field and generate button -->
+            <HBox alignment="CENTER" spacing="10">
+                <TextField fx:id="inputField"
+                           promptText="Enter text to analyze..."
+                           HBox.hgrow="ALWAYS"/>
+                <Button text="Generate" onAction="#onGenerateClicked"/>
+            </HBox>
 
-    <!-- Button -->
-    <Button text="Generate" onAction="#onGenerateClicked"/>
+            <!-- Option to show or hide the syntactic tree -->
+            <HBox alignment="CENTER_LEFT" spacing="5">
+                <CheckBox fx:id="showTreeCheckbox" text="Show Syntactic Tree"/>
+            </HBox>
+        </VBox>
+    </top>
 
-    <!-- Output area -->
-    <TextArea fx:id="outputArea"
-              editable="false"
-              wrapText="true"
-              prefHeight="200"
-              maxWidth="580"/>
-</VBox>
+    <!--
+      Center section: displays the syntax tree (if enabled),
+      the generated phrase, and a toxicity score bar graph.
+    -->
+    <center>
+        <HBox spacing="10" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets top="10" bottom="10" left="20" right="20"/>
+            </padding>
+
+            <!--
+              Container for the syntax tree ASCII representation (initially hidden)
+              visibility toggled by the checkbox.
+            -->
+            <VBox fx:id="syntaxContainer"
+                  spacing="5"
+                  HBox.hgrow="ALWAYS"
+                  VBox.vgrow="ALWAYS"
+                  prefWidth="0"
+                  maxWidth="Infinity">
+                <Label fx:id="syntaxLabel"
+                       text="Syntax Tree:"
+                       visible="false"
+                       managed="false"
+                       />
+                <ScrollPane fx:id="treeScroll"
+                            visible="false"
+                            managed="false">
+                    <TextFlow fx:id="treeAsciiFlow"
+                              prefWidth="400"
+                              lineSpacing="2"/>
+                </ScrollPane>
+            </VBox>
+
+
+            <!--
+              Container for displaying the generated nonsense phrase.
+            -->
+            <VBox fx:id="generatedContainer"
+                  spacing="5"
+                  HBox.hgrow="ALWAYS"
+                  VBox.vgrow="ALWAYS"
+                  prefWidth="0"
+                  maxWidth="Infinity">
+                <Label text="Generated Phrase:"/>
+                <AnchorPane VBox.vgrow="ALWAYS">
+                    <ScrollPane fitToWidth="true" fitToHeight="true" AnchorPane.topAnchor="0"
+                                AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+                        <TextFlow fx:id="outputFlow" lineSpacing="5"/>
+                    </ScrollPane>
+                </AnchorPane>
+            </VBox>
+
+            <!--
+              Sidebar showing toxicity scores as bars.
+              Each bar represents the score of one generated sentence.
+            -->
+            <VBox alignment="TOP_CENTER" spacing="5"
+                  HBox.hgrow="NEVER"
+                  prefWidth="120"
+                  maxWidth="120"
+                  VBox.vgrow="ALWAYS">
+                <Label text="Toxicity Scores"/>
+                <HBox fx:id="toxicityBarsContainer"
+                      alignment="BOTTOM_CENTER"
+                      spacing="10"
+                      HBox.hgrow="NEVER"
+                      VBox.vgrow="ALWAYS">
+                </HBox>
+            </VBox>
+        </HBox>
+    </center>
+
+    <!--
+      Bottom section: centered progress bar shown during generation.
+    -->
+    <bottom>
+        <HBox alignment="CENTER" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets top="10" bottom="10"/>
+            </padding>
+            <ProgressBar fx:id="progressBar"
+                         visible="false" managed="false"
+                         prefWidth="200"
+                         progress="0"/>
+        </HBox>
+    </bottom>
+</BorderPane>

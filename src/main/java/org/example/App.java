@@ -1,31 +1,53 @@
 package org.example;
-import org.example.SentenceStructures.SentenceStructures;
 import org.example.words.*;
-import org.example.SentenceStructures.*;
+import org.example.SentenceStructures.SentenceStructures;
+import org.example.SentenceStructures.SentenceStructureInfo;
 import com.google.cloud.language.v1.*;
+import com.google.cloud.language.v1beta2.ClassificationCategory;
 import com.google.cloud.language.v1beta2.ModerateTextResponse;
 import java.util.*;
 import javafx.application.Application;
 
-/**Core application logic for Nonsense generator.
- * Provides sentences generator method for GUI use and launches JavaFX UI.
- */
 public class App {
 
     /**
-     * Generates a list of "nonsense" sentences with toxicity scores, based on the input text.
-     * If the input contains many words, prepends a notice before the generated sentences.
-     * @param text the input sentence to analyze
-     * @return list of formatted sentences with toxicity scores and notices
-     * @throws Exception on API errors or invalid input
+     * Holds a generated sentence along with its toxicity score.
      */
-    public List<String> generate(String text) throws Exception {
+    public static class SentenceResult {
+        private final String text;
+        private final double toxicity;
+
+        /**
+         * @param text      the generated sentence
+         * @param toxicity  toxicity confidence score from Google API
+         */
+        public SentenceResult(String text, double toxicity) {
+            this.text = text;
+            this.toxicity = toxicity;
+        }
+
+        /** @return the sentence text */
+        public String getText() { return text; }
+
+        /** @return the toxicity score */
+        public double getToxicity() { return toxicity; }
+    }
+
+    /**
+     * Generates a list of nonsense sentences from the input text by analyzing
+     * its syntax, substituting words into templates, and then scoring toxicity.
+     *
+     * @param text  the source text to analyze and remix
+     * @return      list of SentenceResult with generated sentences and scores
+     * @throws Exception if input is invalid or API calls fail
+     */
+    public List<SentenceResult> generate(String text) throws Exception {
         // Validate input
         if (text == null || text.trim().isEmpty() || !text.matches(".*[a-zA-Z]+.*")) {
             throw new IllegalArgumentException("Invalid input: please enter a real sentence.");
         }
 
-        // Initialize lists and structures
+        // Initialize word lists and structures
         Nouns nounList = new Nouns();
         Verbs verbList = new Verbs();
         Adjectives adjectiveList = new Adjectives();
@@ -48,7 +70,7 @@ public class App {
             syntaxResponse = language.analyzeSyntax(req);
         }
 
-        // Categorize tokens
+        // Collect tokens by part of speech
         List<String> nouns      = new ArrayList<>();
         List<String> verbs      = new ArrayList<>();
         List<String> adjectives = new ArrayList<>();
@@ -69,7 +91,7 @@ public class App {
             }
         }
 
-        // Shuffle for variety
+        // Shuffle lists to introduce variety
         Collections.shuffle(nouns);
         Collections.shuffle(verbs);
         Collections.shuffle(adjectives);
@@ -77,15 +99,16 @@ public class App {
         Collections.shuffle(articles);
         Collections.shuffle(pronouns);
 
-        // Generate nonsense sentences
-        int nIdx=0, vIdx=0, adjIdx=0, advIdx=0, artIdx=0, prIdx=0;
+        // Build nonsense sentences using templates
         List<String> finalSentences = new ArrayList<>();
+        int nIdx=0, vIdx=0, adjIdx=0, advIdx=0, artIdx=0, prIdx=0;
+        SentenceStructures structures = new SentenceStructures();
 
         while (nIdx < nouns.size() || vIdx < verbs.size() ||
                 adjIdx < adjectives.size() || advIdx < adverbs.size() ||
                 artIdx < articles.size()  || prIdx < pronouns.size()) {
 
-            // Find best template
+            // Select template that uses the most available words
             SentenceStructureInfo bestTpl = null;
             int maxUsed = -1;
             for (SentenceStructureInfo tpl : sentenceStructures.getStructures()) {
@@ -102,7 +125,7 @@ public class App {
             }
             if (bestTpl == null) break;
 
-            // Split template and substitute
+            // Split the chosen template into tokens, then replace placeholders with actual words or random fallbacks
             List<String> tokens = WordUtil.SentenceSplitter(bestTpl.getTemplate());
             for (int i = 0; i < tokens.size(); i++) {
                 String typeTag = WordUtil.TypeCheck(tokens.get(i));
@@ -122,46 +145,36 @@ public class App {
                             prIdx < pronouns.size() ? pronouns.get(prIdx++) : pronounList.Random()));
                 }
             }
-            finalSentences.add(String.join(" ", tokens));
+            // capitalize first letter of generated sentence
+            String raw = String.join(" ", tokens);
+            String capitalized = raw.isEmpty()
+                    ? raw
+                    : Character.toUpperCase(raw.charAt(0)) + raw.substring(1);
+            finalSentences.add(capitalized);
         }
 
-        // Moderate text toxicity
-        List<String> withToxicity = new ArrayList<>();
-        try (com.google.cloud.language.v1beta2.LanguageServiceClient modClient =
-                     com.google.cloud.language.v1beta2.LanguageServiceClient.create()) {
+        // Moderate each sentence and record toxicity
+        List<SentenceResult> results = new ArrayList<>();
+        try (var modClient = com.google.cloud.language.v1beta2.LanguageServiceClient.create()) {
             for (String s : finalSentences) {
-                com.google.cloud.language.v1beta2.Document outDoc =
-                        com.google.cloud.language.v1beta2.Document.newBuilder()
-                                .setContent(s)
-                                .setType(com.google.cloud.language.v1beta2.Document.Type.PLAIN_TEXT)
-                                .build();
+                var outDoc = com.google.cloud.language.v1beta2.Document.newBuilder()
+                        .setContent(s)
+                        .setType(com.google.cloud.language.v1beta2.Document.Type.PLAIN_TEXT)
+                        .build();
                 ModerateTextResponse modResp = modClient.moderateText(outDoc);
-                String tox = modResp.getModerationCategoriesList().stream()
+                double tox = modResp.getModerationCategoriesList().stream()
                         .filter(c -> "Toxic".equalsIgnoreCase(c.getName()))
-                        .findFirst()
-                        .map(c -> String.format("%.2f%%", c.getConfidence() * 100))
-                        .orElse("No toxicity detected");
-                withToxicity.add("→ " + s + "  ---->  Toxicity score: " + tox);
+                        .mapToDouble(ClassificationCategory::getConfidence)
+                        .findFirst().orElse(0.0);
+                results.add(new SentenceResult(s, tox));
             }
         }
-
-        // If multiple sentences generated, prepend notice
-        if (finalSentences.size() > 1) {
-            List<String> notice = Arrays.asList(
-                    "The input sentence contains many words.",
-                    "Multiple nonsense sentences have been generated to use them all"
-            );
-            List<String> combined = new ArrayList<>();
-            combined.addAll(notice);
-            combined.addAll(withToxicity);
-            return combined;
-        }
-
-        return withToxicity;
+        return results;
     }
 
-    //Launch the JavaFX UI instead of console I/O
-
+    /**
+     * Launches the JavaFX UI.
+     */
     public static void main(String[] args) {
         Application.launch(UI.class, args);
     }
