@@ -1,3 +1,6 @@
+/*
+ * Applies to the toxicity bar container of the UI:
+ */
 .main-container {
     -fx-border-color: #ccc;
     -fx-background-color: #eee;
