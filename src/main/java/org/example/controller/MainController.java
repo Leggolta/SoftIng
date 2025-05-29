@@ -26,6 +26,7 @@ import edu.stanford.nlp.pipeline.CoreDocument;
 import edu.stanford.nlp.pipeline.CoreSentence;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.trees.Tree;
+import org.example.words.WordUtil;
 
 /**
  * Controller for the main JavaFX UI.
@@ -162,10 +163,12 @@ public class MainController {
 
                         // 2) the generated sentence
                         Text sentenceText = new Text("→ " + r.getText() + "\n");
+                        WordUtil.Log("./Results/Log.txt", "→ " + r.getText() + "\n");
                         sentenceText.setFont(baseFont);
 
                         // 3) the toxicity percentage
                         Text toxText = new Text("→ Toxicity: " + String.format("%.2f%%\n\n", r.getToxicity() * 100));
+                        WordUtil.Log("./Results/Log.txt", "→ Toxicity: " + String.format("%.2f%%\n\n", r.getToxicity() * 100));
                         toxText.getStyleClass().add("bold-text");
 
                         // 4) add to the TextFlow
