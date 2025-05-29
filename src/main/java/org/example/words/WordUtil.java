@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Scanner;
 import java.io.FileReader;
+import java.io.FileWriter;
+
 
 public class WordUtil{
 
@@ -93,5 +95,14 @@ public class WordUtil{
     {
         String Changed = Original.replace(Type, NewWord);
         return Changed;
+    }
+
+    public static void Log(String Path, String Phrase)
+    {
+        try (FileWriter fw = new FileWriter(Path, true)) {
+            fw.write(Phrase+"\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
