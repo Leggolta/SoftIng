@@ -5,7 +5,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
+
+import java.io.InputStream;
 import java.net.URL;
+import javafx.scene.image.Image;
 
 /**
  * Main entry point for the JavaFX application.
@@ -34,6 +37,16 @@ public class UI extends Application {
 
         // Set the window title shown in the title bar
         primaryStage.setTitle("Nonsense generator");
+
+        //Set the icon logo
+        try (InputStream is = getClass().getResourceAsStream("/org/example/images/logo.jpg")) {
+            if (is == null) {
+                System.err.println("getResourceAsStream returned null for: " + "/org/example/images/logo.jpg");
+            } else {
+                Image logo = new Image(is);
+                primaryStage.getIcons().add(logo);
+            }
+        }
 
         // Set and resize a scene from the FXML and attach it to the stage
         primaryStage.setScene(scene);

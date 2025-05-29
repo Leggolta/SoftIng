@@ -90,6 +90,13 @@
                     <!-- JavaFX Application class entry point -->
                     <mainClass>org.example.UI</mainClass>
                 </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

@@ -39,6 +39,7 @@ public class MainController {
     @FXML private TextField inputField;
     @FXML private CheckBox showTreeCheckbox;
     @FXML private VBox syntaxContainer;
+    @FXML private VBox generatedContainer;
     @FXML private Label syntaxLabel;
     @FXML private ScrollPane treeScroll;
     @FXML private TextFlow treeAsciiFlow;
@@ -165,7 +166,7 @@ public class MainController {
 
                         // 3) the toxicity percentage
                         Text toxText = new Text("→ Toxicity: " + String.format("%.2f%%\n\n", r.getToxicity() * 100));
-                        toxText.setFont(Font.font(baseFont.getFamily(), FontWeight.BOLD, baseFont.getSize()));
+                        toxText.getStyleClass().add("bold-text");
 
                         // 4) add to the TextFlow
                         outputFlow.getChildren().addAll(structText, sentenceText, toxText);
@@ -178,7 +179,7 @@ public class MainController {
                         container.setPrefWidth(20);
                         container.setMinWidth(20);
                         container.prefHeightProperty().bind(toxicityBarsContainer.heightProperty());
-                        container.getStyleClass().add("main-container");
+                        container.getStyleClass().add("toxicity-container");
 
                         Rectangle bar = new Rectangle();
                         bar.setArcWidth(8);
@@ -247,11 +248,10 @@ public class MainController {
         tBranch.setFont(appFont);
 
         Text tLabel  = new Text(full);
-        tLabel.setFont(Font.font(
-                appFont.getFamily(),
-                leaf ? FontWeight.BOLD : FontWeight.NORMAL,
-                appFont.getSize()
-        ));
+        tLabel.setFont(Font.font(appFont.getFamily(), appFont.getSize()));
+        if (leaf) {
+            tLabel.getStyleClass().add("bold-text");
+        }
 
         treeAsciiFlow.getChildren().addAll(tBranch, tLabel, new Text("\n"));
 

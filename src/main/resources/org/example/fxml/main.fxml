@@ -48,7 +48,7 @@
       the generated phrase, and a toxicity score bar graph.
     -->
     <center>
-        <HBox spacing="10" BorderPane.alignment="CENTER">
+        <HBox spacing="10" BorderPane.alignment="CENTER" >
             <padding>
                 <Insets top="10" bottom="10" left="20" right="20"/>
             </padding>
