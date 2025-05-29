@@ -76,8 +76,6 @@
                               lineSpacing="2"/>
                 </ScrollPane>
             </VBox>
-
-
             <!--
               Container for displaying the generated nonsense phrase.
             -->
