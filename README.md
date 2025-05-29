@@ -1,5 +1,5 @@
 # Nonsense Generator
-<img src="src/main/resources/org/example/images/logo.jpg" alt="Logo" width="300" height="300">
+<img src="src/main/resources/org/example/images/logo.png" alt="Logo" width="250" height="300">
 
 # Introduction
 The Nonsense Generator allows you to get random sentences using as an imput the words from a sentence of your choosing.

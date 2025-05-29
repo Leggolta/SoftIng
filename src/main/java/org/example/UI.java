@@ -5,10 +5,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
+import javafx.scene.image.Image;
 
 import java.io.InputStream;
 import java.net.URL;
-import javafx.scene.image.Image;
 
 /**
  * Main entry point for the JavaFX application.
@@ -39,9 +39,9 @@ public class UI extends Application {
         primaryStage.setTitle("Nonsense generator");
 
         //Set the icon logo
-        try (InputStream is = getClass().getResourceAsStream("/org/example/images/logo.jpg")) {
+        try (InputStream is = getClass().getResourceAsStream("/org/example/images/logo.png")) {
             if (is == null) {
-                System.err.println("getResourceAsStream returned null for: " + "/org/example/images/logo.jpg");
+                System.err.println("getResourceAsStream returned null for: " + "/org/example/images/logo.png");
             } else {
                 Image logo = new Image(is);
                 primaryStage.getIcons().add(logo);
