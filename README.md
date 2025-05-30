@@ -2,6 +2,8 @@ Group Quadri (Garzotto, Pozza, Silvello, Gavrilovska)
 # Nonsense Generator
 <img src="src/main/resources/org/example/images/logo.png" alt="Logo" width="250" height="300">
 
+---
+
 # Manual
 # Introduction
 The Nonsense Generator allows you to get random sentences using as an imput the words from a sentence of your choosing.
@@ -108,6 +110,7 @@ chmod +x run.sh
 
 
 
+---
 
 # Contributors
 [Garzotto Mattia](https://github.com/garz8)
