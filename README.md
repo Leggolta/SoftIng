@@ -21,7 +21,7 @@ The Nonsense Generator is a random sentence generator that allows you to get ran
 
 - [Used Technologies](#used-technologies)
 
-- (Main functions taken by libraries](#main-functions-taken-by-libraries)
+- [Main functions taken by libraries](#main-functions-taken-by-libraries)
 
 - [Contributors](#contributors)
 
