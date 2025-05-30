@@ -144,21 +144,25 @@ public class MainController {
                     toxicityScore.set(0);
                 } else {
                     if (finalResults.size() > 1) {
-                        outputFlow.getChildren().add(new Text(
+                        Text infoText = new Text(
                                 """
-                                        The input sentence contains many words.
-                                        Multiple nonsense sentences have been generated to use them all
-                                        
-                                        """
-                        ));
+                                The input sentence contains many words.
+                                Multiple nonsense sentences have been generated to use them all.
+                        
+                                """
+                        );
+                        infoText.setFill(Color.DARKBLUE);
+                        infoText.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
+                        outputFlow.getChildren().add(infoText);
                     }
 
                     Font baseFont = Font.getDefault();
 
                     for (SentenceResult r : finalResults) {
                         // 1) show the structure template
-                        Text structText = new Text("Structure: " + r.getStructure() + "\n");
+                        Text structText = new Text("Sentence Structure: " + r.getStructure() + "\n");
                         structText.setFont(Font.font(baseFont.getFamily(), FontPosture.ITALIC, baseFont.getSize()));
+                        WordUtil.Log("./Results/Log.txt", "→ Sentence Structure: " + r.getStructure() + "\n");
                         structText.setFill(Color.DARKGRAY);
 
                         // 2) the generated sentence
@@ -174,6 +178,19 @@ public class MainController {
                         // 4) add to the TextFlow
                         outputFlow.getChildren().addAll(structText, sentenceText, toxText);
                     }
+
+                    // final text for goodbye message
+                    Text finalMessage = new Text(
+                            "🙂 The output, including the sentence structure, the generated nonsense sentence, and its relative toxicity,\n" +
+                                    "has been saved in the log.txt file inside the Results folder, which is located in the main project directory.\n\n" +
+
+                                    "Thank you for using this application!\n" +
+                                    "We hope you had fun. Feel free to write and analyze as many sentences as you like using our nonsense generator.\n" +
+                                    "See you next time ;) "
+                    );
+                    finalMessage.setFont(Font.font("Arial", FontWeight.NORMAL, 14));
+                    finalMessage.setFill(Color.DARKGREEN);
+                    outputFlow.getChildren().add(finalMessage);
 
                     toxicityBarsContainer.getChildren().clear();
                     for (SentenceResult r : finalResults) {
