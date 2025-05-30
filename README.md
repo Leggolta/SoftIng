@@ -8,6 +8,7 @@ Group Quadri (Garzotto, Pozza, Silvello, Gavrilovska)
 
 - [Design Document](docs/Design_document.md)
 
+- [System Test Document](docs/SystemTestDocument.pdf)
 ---
 
 # Manual
