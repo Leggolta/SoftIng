@@ -112,7 +112,9 @@ public class MainController {
         String inputText = inputField.getText().trim();
         if (inputText.isEmpty()) {
             outputFlow.getChildren().clear();
-            outputFlow.getChildren().add(new Text("❌ Please enter a non-empty sentence!"));
+            Text errorText = new Text("❌ Please enter a non-empty sentence!");
+            errorText.setFill(Color.RED);
+            outputFlow.getChildren().add(errorText);
             toxicityScore.set(0);
             return;
         }
@@ -140,7 +142,10 @@ public class MainController {
                 outputFlow.getChildren().clear();
 
                 if (finalError != null) {
-                    outputFlow.getChildren().add(new Text("Error processing input:\n" + finalError.getMessage()));
+                    Text errorText = new Text("Error processing input:\n" + finalError.getMessage());
+                    errorText.setFill(Color.RED);
+
+                    outputFlow.getChildren().add(errorText);
                     toxicityScore.set(0);
                 } else {
                     if (finalResults.size() > 1) {
