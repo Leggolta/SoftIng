@@ -1,5 +1,5 @@
 # Nonsense Generator
-<img src="src/main/resources/org/example/images/logo.jpg" alt="Logo" width="300" height="300">
+<img src="src/main/resources/org/example/images/logo.png" alt="Logo" width="250" height="300">
 
 # Introduction
 The Nonsense Generator allows you to get random sentences using as an imput the words from a sentence of your choosing.
@@ -8,7 +8,7 @@ The Nonsense Generator allows you to get random sentences using as an imput the 
 
 [Google API key guide](#google-api-key)
 
-[Nonsense Generator setup guide](#nonsense-generator)
+[Nonsense Generator setup guide](#nonsense-generator-setup)
 ## Maven
 This program requires Maven to run. If you have Maven already installed on your pc, you can skip to the next section.
 To check if you have Maven installed from terminal you can use the command `mvn -v`
@@ -62,7 +62,7 @@ On the **Service Accounts** section, select `Manage service accounts` then creat
 
 Once created, click on the three dots in the Actions tab then `Manage keys`. Finally create a new key and download it as **JSON**.
 
-## Nonsense generator
+## Nonsense generator setup
 To run the program it is recomended using [Intellij IDE](https://www.jetbrains.com/idea/) to run it as a Maven project.
 
 Download the [latest release](https://github.com/Leggolta/SoftIng/releases) of the project, extract it to your pc and open it in Intellij.
