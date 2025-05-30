@@ -1,8 +1,17 @@
+Group Quadri (Garzotto, Pozza, Silvello, Gavrilovska)
 # Nonsense Generator
 <img src="src/main/resources/org/example/images/logo.png" alt="Logo" width="250" height="300">
 
+# Manual
 # Introduction
 The Nonsense Generator allows you to get random sentences using as an imput the words from a sentence of your choosing.
+
+[Installation guide](#how-to-install)
+
+[Used Technologies](#used-technologies)
+
+[Contributors](#contributors)
+
 # How to install
 [Maven install guide](#maven)
 
@@ -74,7 +83,12 @@ Now on Intellij check for the Maven icon on the top right of the screen. In the 
 
 Finally you can run the file using the `run.bat` or `run.command` depending on the system used.
 
-To run the program from linux execute it from terminal using  `./run.sh`
+To run the program from linux execute it from terminal using  `./run.sh`.
+
+In alternative you can run the code from all the previously quoted operating systems by opening the terminal from the project's folder and running the command
+```
+mvn javafx:run
+```
 
 In case of errors caused by missing permissions, run this command line before executing the code
 **Linux/Mac:**
@@ -82,7 +96,24 @@ In case of errors caused by missing permissions, run this command line before ex
 chmod +x run.sh
 ```
 
+# Used Technologies
+|Name|Version|Description|
+|---|---|---|
+|Java|`21.0.1`|Environment used for the development of the application|
+|JavaFX|`20`|Platform based on Java for client application development|
+|JUnit|`5.13.0`|Testing framework for Java|
+|Maven|`3.9.9`|Build automation and project management tool|
+|Google Cloud Language|`2.36.0`|Cloud-based service offering natural language processing capabilities|
+|Stanford CoreNLP|`4.5.1`|Natural language processing toolkit developed by Stanford NLP Group|
+
 
 
 
 # Contributors
+[Garzotto Mattia](https://github.com/garz8)
+
+[Pozza Riccardo](https://github.com/Leggolta)
+
+[Silvello Giacomo](https://github.com/GiacomoSilvello)
+
+[Gavrilovska Kristina](https://github.com/kiki30072004)
