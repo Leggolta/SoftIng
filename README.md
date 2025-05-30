@@ -3,33 +3,39 @@ Group Quadri (Garzotto, Pozza, Silvello, Gavrilovska)
 <img src="src/main/resources/org/example/images/logo.png" alt="Logo" width="250" height="300">
 
 ---
+# Deliverables
+- [Manual](#manual)
+
+- [Design Document](docs/Design_document.md)
+
+---
 
 # Manual
 # Introduction
 The Nonsense Generator allows you to get random sentences using as an imput the words from a sentence of your choosing.
 
-[Installation guide](#how-to-install)
+- [Installation guide](#how-to-install)
 
-[Used Technologies](#used-technologies)
+- [Used Technologies](#used-technologies)
 
-[Contributors](#contributors)
+- [Contributors](#contributors)
 
 # How to install
-[Maven install guide](#maven)
+- [Maven install guide](#maven)
 
-[Google API key guide](#google-api-key)
+- [Google API key guide](#google-api-key)
 
-[Nonsense Generator setup guide](#nonsense-generator-setup)
+- [Nonsense Generator setup guide](#nonsense-generator-setup)
 ## Maven
 This program requires Maven to run. If you have Maven already installed on your pc, you can skip to the next section.
 To check if you have Maven installed from terminal you can use the command `mvn -v`
 If Maven isn't installed you can either download it manually from [Maven's official website](https://maven.apache.org/download.cgi) or from terminal using these commands depending on the system
 
-[Windows](#windows-install)
+- [Windows](#windows-install)
 
-[Mac](#mac-install)
+- [Mac](#mac-install)
 
-[Linux](#linux-install)
+- [Linux](#linux-install)
 ### Windows install
 You can install Maven from shell using [Chocolatey](https://chocolatey.org/).
 If you don't have chocolatey installed, you can install it from administrator PowerShell. First, run the Get-ExecutionPolicy. If it returns Restricted, run one of the two commands `Set-ExecutionPolicy AllSigned` or `Set-ExecutionPolicy Bypass -Scope Process`
@@ -113,10 +119,10 @@ chmod +x run.sh
 ---
 
 # Contributors
-[Garzotto Mattia](https://github.com/garz8)
+- [Garzotto Mattia](https://github.com/garz8)
 
-[Pozza Riccardo](https://github.com/Leggolta)
+- [Pozza Riccardo](https://github.com/Leggolta)
 
-[Silvello Giacomo](https://github.com/GiacomoSilvello)
+- [Silvello Giacomo](https://github.com/GiacomoSilvello)
 
-[Gavrilovska Kristina](https://github.com/kiki30072004)
+- [Gavrilovska Kristina](https://github.com/kiki30072004)

@@ -10,7 +10,7 @@ Group Quadri (Garzotto, Pozza, Silvello, Gavrilovska)
 
 ---
 ## Domain model
-![Domain model]()
+![Domain model](img/DomainModel.png)
 
 ```plantuml
 @startuml
@@ -69,7 +69,7 @@ Google_API "1" *-- "1" Toxicity: "calculate"
 ```
 
 ## System sequence diagrams
-![System sequence diagrams]()
+![System sequence diagrams](img/)
 
 ```plantuml
 @startuml
@@ -137,7 +137,7 @@ App -> User: output finale (frasi + tossicità)
 ```
 
 ## Design class model
-![Design class model]()
+![Design class model](img/DesignClassModel.png)
 
 ```plantuml
 @startuml
@@ -270,7 +270,7 @@ log <-- "1" WordUtil :writes
 ```
 
 ## Internal sequence diagrams
-![Internal sequence diagrams]()
+![Internal sequence diagrams](img/)
 
 ```plantuml
 generate()
