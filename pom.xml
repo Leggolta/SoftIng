@@ -73,6 +73,7 @@
 
     <build>
         <plugins>
+
             <!-- JavaFX Maven Plugin per mvn javafx:run -->
             <plugin>
                 <groupId>org.openjfx</groupId>
