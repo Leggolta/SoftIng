@@ -9,6 +9,8 @@ Group Quadri (Garzotto, Pozza, Silvello, Gavrilovska)
 - [Design Document](docs/Design_document.md)
 
 - [System Test Document](docs/SystemTestDocument.pdf)
+
+- [Unit test report](docs/UnitTestReport.pdf)
 ---
 
 # Manual
@@ -143,7 +145,7 @@ chmod +x run.sh
 |---|---|---|
 |Java|`21.0.1`|Environment used for the development of the application|
 |JavaFX|`20`|Platform based on Java for client application development|
-|JUnit|`5.13.0`|Testing framework for Java|
+|JUnit|`5.8.2`|Testing framework for Java|
 |Maven|`3.9.9`|Build automation and project management tool|
 |Google Cloud Language|`2.36.0`|Cloud-based service offering natural language processing capabilities|
 |Stanford CoreNLP|`4.5.1`|Natural language processing toolkit developed by Stanford NLP Group|
@@ -152,15 +154,19 @@ chmod +x run.sh
 
 ### Google Cloud Natural Language API
 
-APIs utilized to analyze the syntax of sentences and to validate specific parameters related to sentence properties, such as toxicity. In this project, two Google Cloud Natural Language APIs were used:
+APIs utilized to analyze the syntax of sentences and to validate specific parameters related to sentence properties, such as toxicity. In this project, two Google Cloud Natural Language APIs were used:  
 
-**Analyzing Syntax**: This API returns a set of `Token` objects, which provide essential information for the program's functionality. Among the most frequently used functions there are `token.getPartOfSpeech()` and `token.getDependencyEdge()`.
+**Analyzing Syntax**: This API returns a set of `Token` objects, which provide essential information for the program's functionality. Among the most frequently used functions there are `getTokenList()`, `analyzeSyntax()` and `getTag()`.
 
-**Moderate Text**: This API provides a collection of `ClassificationCategory` objects, each containing various moderation parameters related to the sentence.
+**Moderate Text**: This API returns `ModerateTextResponse` objects, each containing various moderation parameters related to the sentence. The most used function was `moderateText(var document)`.
 
 ### Stanford CoreNLP
 
-API that enables to derive linguistic annotations for text, including, parts of speech, dependency and constituency parses, and relations. This api was used in the project to extract the syntactic tree.
+API that enables to derive linguistic annotations for text, including, parts of speech, dependency and constituency parses, and relations. This api was used in the project to extract and display the syntactic tree. Among the most frequently used functions are `annotate(CoreDocument doc)`, `constituencyParse()`, `isLeaf()` and `children()`.
+
+### JavaFX
+
+Open-source graphical framework for the development of user interface. In the project only the function `launch()` was used in order to run the UI, othen than overwriting the function `start(Stage primaryStage)`.
 
 ---
 
