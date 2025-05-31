@@ -8,6 +8,8 @@ Group Quadri (Garzotto, Pozza, Silvello, Gavrilovska)
 
 - [Design Document](docs/Design_document.md)
 
+- [Acceptance Criteria](docs/Acceptance%20criteria.md)
+
 - [System Test Document](docs/SystemTestDocument.pdf)
 
 - [Unit test report](docs/UnitTestReport.pdf)
