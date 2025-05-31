@@ -209,7 +209,7 @@ deactivate UI
 
 ## Internal sequence diagrams
 
-### generate()
+### generate(String)
 
 ![generate diagram](img/generate.png)
 ```plantuml
